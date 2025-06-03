@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Compras</title>
+</head>
+
+<body>
+    <h2>Historial de mis compras</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-compras"></tbody>
+    </table>
+
+    <script>
+        const usuarioId = localStorage.getItem("usuario_id");
+
+        if (!usuarioId) {
+            alert("Debes iniciar sesión primero");
+            window.location.href = "login";
+        }
+
+
+        async function cargarMisCompras() {
+            const res = await fetch(`http://localhost:3000/mis-compras/${usuarioId}`);
+            const compras = await res.json();
+
+            const tabla = document.getElementById("tabla-compras");
+
+            compras.forEach((c, index) => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${c.producto}</td>
+        <td>${c.cantidad}</td>
+        <td>$${parseFloat(c.total).toFixed(2)}</td>
+        <td>${new Date(c.fecha).toLocaleString()}</td>
+    `;
+                tabla.appendChild(fila);
+            });
+
+        }
+
+        cargarMisCompras();
+    </script>
+</body>
+
+</html>

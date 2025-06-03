@@ -14,14 +14,16 @@ boton.addEventListener('click', async () => {
 
     const data = await res.json();
     if (data.success) {
+        // Guardar el id del usuario
+        localStorage.setItem("usuario_id", data.id);
+
         alert(`Bienvenido ${data.nombre}`);
         if (data.rol === "admin") {
             window.location.href = "admin.html";
         } else {
             window.location.href = "venta.html";
         }
-    } else {
-        alert("Credenciales incorrectas");
     }
+
 
 });

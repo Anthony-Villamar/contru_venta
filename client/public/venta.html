@@ -1,11 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Productos</title>
 </head>
 <body>
-    <h1>venta</h1>
+    <h2>Bienvenido, estos son nuestros productos:</h2>
+    <button onclick="window.location.href='mis-compras.html'">Ver mis compras</button>
+    
+
+    <ul id="lista-productos"></ul>
+
+    <script>
+        const usuarioId = localStorage.getItem("usuario_id");
+
+        async function obtenerProductos() {
+    try {
+        const res = await fetch("http://localhost:3000/productos");
+    const productos = await res.json();
+    
+    const lista = document.getElementById("lista-productos");
+    lista.innerHTML = ""; // ✅ borra los anteriores
+
+    productos.forEach(p => {
+        const item = document.createElement("li");
+        item.innerHTML = `
+            ${p.nombre} - $${p.precio} (${p.stock} disponibles)
+            <button onclick="comprar(${p.id}, ${p.precio}, ${p.peso_kg || 0})">Comprar 1</button>
+        `;
+        lista.appendChild(item);
+    });
+
+    } catch (error) {
+        console.error("Error al obtener productos:", error);
+    }
+}
+
+
+
+async function comprar(productoId, precioUnitario) {
+    const cantidad = 1;
+    const total = precioUnitario * cantidad;
+
+    const res = await fetch("http://localhost:3000/comprar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            usuario_id: usuarioId,
+            producto_id: productoId,
+            cantidad,
+            total
+        })
+    });
+
+    const data = await res.json();
+   if (data.success) {
+    alert("Compra exitosa");
+    await obtenerProductos(); // ✅ esto es lo que hace que actualice la lista
+} else {
+    alert("Error: " + data.message);
+}
+
+}
+
+(async () =>{
+    await obtenerProductos();        
+        })();
+
+    </script>
 </body>
 </html>

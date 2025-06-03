@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import {PuertoFrontend1} from "./config.js";
 
 
 const app = express();
@@ -30,8 +31,12 @@ app.get("/admin.html", (request, response) => {
     response.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
+app.get("/mis-compras.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "mis-compras.html"));
+});
 
-app.listen(3001, () => {
+
+app.listen(PuertoFrontend1, () => {
     console.log(__dirname)  
-    console.log("Server is running on http://localhost:3001");
+    console.log("Server is running on http://localhost:"+ PuertoFrontend1);
 });
